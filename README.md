@@ -1,2 +1,5 @@
-# My-Chess-Game
-Im building a chess game for my school project.
+# My Chess Game
+
+Im bored so I tried to build a chess game :/
+
+Will try add a Chess AI later ( RNG :> )
