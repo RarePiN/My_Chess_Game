@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdlib.h>
 using namespace std;
 
 struct chess_pisces {
@@ -11,7 +12,7 @@ string white_symbols[6] = {"♟", "♞", "♝", "♜", "♛", "♚"};
 string black_symbols[6] = {"♙", "♘", "♗", "♖", "♕", "♔"};
 
 bool check_for_king(int color) {
-  for (int i = 0 ; i < 8 ; i++) {
+  for (int i = 0; i < 8; i++) {
     for (int j = 0; j < 8; j++) {
       if (board[i][j].id == 6 and board[i][j].color == color) {
         return true;
@@ -22,8 +23,7 @@ bool check_for_king(int color) {
 }
 
 void set_board() {
-
-  //Pawns
+  // Pawns
   for (int i = 0; i < 8; i++) {
     board[i][6].id = 1;
     board[i][6].color = 0;
@@ -68,47 +68,55 @@ void set_board() {
   board[4][7].color = 0;
 }
 
-void draw_board() {
+void draw_board(int color) {
+  system("clear");
   char x = 'A';
   for (int i = 0; i < 8; i++) {
-    cout << i + 1 << " ";
-    for (int j = 0; j < 8; j++) {
-      if (board[j][i].id != 0) {
-        if (board[j][i].color == 0) {
-          cout << white_symbols[board[j][i].id - 1];
-        } else {
-          cout << black_symbols[board[j][i].id - 1];
-        }
+    cout << i + 1;
+    for (int j = 0 ; j < 8; j++) {
+      if (board[j][i].id == 0) {
+        cout << " " << ".";
       } else {
-        cout << " ";
+        if (board[j][i].color == 0) {
+          cout << " " << white_symbols[board[j][i].id - 1];
+        } else {
+          cout << " " << black_symbols[board[j][i].id - 1];
+        }
       }
-      cout << " ";
     }
-
     cout << endl;
   }
-  cout << " ";
-  cout << " ";
+
+  cout << "  ";
   for (int i = 0; i < 8; i++) {
     cout << x << " ";
     x += 1;
+  }
+  cout << endl;
+  cout << endl;
+  if (color == 0) {
+    cout << "It's white's turn.";
+   } else {
+    cout << "It's black's turn.";
   }
 }
 
 int main() {
   set_board();
-  draw_board();
   int turn = 0;
+  draw_board(turn);
   // Move Pieces
-  string color[2] = {"white","black"};
+  string color[2] = {"white", "black"};
   while (check_for_king(0) and check_for_king(1)) {
-    int x, y ,x1 ,y1;
+    int x, y, x1, y1;
     char count, count1;
-    cout << endl;
+    string input;
+    cout << endl << endl;;
     cout << "Please choose a piece: ";
-    cin >> x >> count;
-    x = x - 1;
-    y = count - 65;
+    cin >> input;
+    x = input[0] - 49;
+    y = input[1] - 65;
+    
     if (board[y][x].id == 0) {
       cout << "No piece is on that position.";
     } else {
@@ -119,62 +127,212 @@ int main() {
         x1 = x1 - 1;
         y1 = count1 - 65;
 
-        //Check if move is legal
+        // Check if move is legal
         bool legal = false;
         bool can_castle = true;
+        bool promote = false;
+        int pro = 0;
 
         // Pawn
         if (board[y][x].id == 1) {
           cout << "Its a pawn!" << endl;
+      
           if (x1 == x + 2 or x1 == x - 2) {
             if (board[y][x].color == 0 and x == 6 and x1 == x - 2) {
-              if (board[y][x-1].id == 0 and board[y][x-2].id == 0) {
-                legal = true;
+              if (board[y][x - 1].id == 0 and board[y][x - 2].id == 0) {
+                if (y1 == y) {
+                  legal = true;
+                }
               }
             } else if (board[y][x].color == 1 and x == 1 and x1 == x + 2) {
-              if (board[y][x+1].id == 0 and board[y][x+2].id == 0) {
-                legal = true;
+              if (board[y][x + 1].id == 0 and board[y][x + 2].id == 0) {
+                if (y1 == y) {
+                  legal = true;
+                }
               }
             }
           }
-          if (y1 == y and x1 == x - 1 and board[y][x1].id == 0) {
+          if (y1 == y and x1 == x + 1 and board[y][x1].id == 0 and board[y][x].color == 1) {
+            legal = true;
+          } else if (y1 == y and x1 == x - 1 and board[y][x1].id == 0 and board[y][x].color == 0) {
             legal = true;
           }
           if (y1 == y + 1 or y1 == y - 1) {
             if (board[y][x].color == 0) {
-              if (x1 == x - 1 and board[y1][x1].id != 0 and board[y1][x1].color != 0) {
+              if (x1 == x - 1 and board[y1][x1].id != 0 and
+                  board[y1][x1].color != 0) {
                 legal = true;
               }
             } else if (board[y][x].color == 1) {
-              if (x1 == x + 1 and board[y1][x1].id != 0 and board[y1][x1].color != 1) {
+              if (x1 == x + 1 and board[y1][x1].id != 0 and
+                  board[y1][x1].color != 1) {
                 legal = true;
               }
             }
           }
+
+          // Pawn promote
+          if (legal == true and x1 == 0 and board[y][x].color == 0) {
+            promote = true;
+          } else if (legal == true and x1 == 7 and board[y][x].color == 1) {
+            promote = true;
+          }
+          if (promote == true) {
+            cout << "Choose a piece to promote: (0 :Knight, 1:Bishop, 2:Rook, 3: Queen)" << endl;
+            cin >> pro;
+          }
+        }
+        
+        // Knight
+        if (board[y][x].id == 2) {
+          cout << "Its a knight." << endl;
+          if (board[y1][x1].id == 0 or board[y1][x1].color != board[y][x].color) {
+            if (x1 - 1 == x and y1 - 2 == y) {
+              legal = true;
+            } else if (x1 + 1 == x and y1 - 2 == y) {
+              legal = true;
+            } else if (x1 - 1 == x and y1 + 2 == y) {
+              legal = true;
+            } else if (x1 + 1 == x and y1 + 2 == y) {
+              legal = true;
+            } else if (x1 + 2 == x and y1 - 1 == y) {
+              legal = true;
+            } else if (x1 + 2 == x and y1 + 1 == y) {
+              legal = true;
+            } else if (x1 - 2 == x and y1 - 1 == y) {
+              legal = true;
+            } else if (x1 - 2 == x and y1 + 1 == y) {
+              legal = true;
+            }
+          }
         }
 
-        //Horse
+        //Bishop
+        if (board[y][x].id == 3) {
+          cout << "It's a bishop." << endl;
+          long slope;
+          if (y1 - y != 0) {
+            slope = (x1 - x) / (y1 - y);
+            if (slope == 1 or slope == -1) {
+              legal = true;
+            }
+          }
+        }
+
+        //Rook
+        if (board[y][x].id == 4) {
+          cout << "It's a rook." << endl;
+          if (y1 != y or x1 != x) {
+            if (y1 == y and x1 != x) {
+              if (board[y1][x1].id != 0) {
+                if (board[y1][x1].color != board[y][x].color) {
+                  legal = true;
+                }
+              } else {
+                legal = true;
+              }
+            } else if (x1 == x and y1 != y) {
+              if (board[y1][x1].id != 0) {
+                if (board[y1][x1].color != board[y][x].color) {
+                  legal = true;
+                }
+              } else {
+                legal = true;
+              }
+            }
+          }
+
+          //Check if anything is in its way.
+          
+          if (legal) {
+            //Find the direction of the rook.
+            int tempX = x, tempY = y;
+            if (x1 > x and y1 == y) { // down
+
+            } else if (x1 < x and y1 == y) { // up
+
+            } else if (y1 > y and x1 == x) { // right
+
+            } else if (y1 < y and x1 == x) { // left
+
+            }
+          }
+        }
+
+        //Queen
+        if (board[y][x].id == 5) {
+          cout << "It is the Queen." << endl;
+          if (board[y1][x1].id == 0 or board[y1][x1].color != board[y][x].color) {
+            if (y1 != y or x1 != x) {
+              if (y1 == y and x1 != x) {
+                if (board[y1][x1].id != 0) {
+                  if (board[y1][x1].color != board[y][x].color) {
+                    legal = true;
+                  }
+                } else {
+                  legal = true;
+                }
+              } else if (x1 == x and y1 != y) {
+                if (board[y1][x1].id != 0) {
+                  if (board[y1][x1].color != board[y][x].color) {
+                    legal = true;
+                  }
+                } else {
+                  legal = true;
+                }
+              }
+            }  
+          }
+          long slope;
+          if (y1 - y != 0) {
+            slope = (x1 - x) / (y1 - y);
+            if (slope == 1 or slope == -1) {
+              legal = true;
+            }
+          }
+        }
+
+        //King
+        if (board[y][x].id == 6) {
+          cout << "It is the King." << endl;
+          if (board[y1][x1].id == 0 or board[y1][x1].color != board[y][x].color) {
+            if (x1 == x and abs(y1 - y) == 1) {
+              legal = true;
+            } else if (y1 == y and abs(x1 - x) == 1) {
+              legal = true;
+            } else if (abs(x1 - x) == 1 and abs(y1 - y) == 1) {
+              legal = true;
+            }
+          }
+        }
 
         if (legal) {
-          board[y1][x1].id = board[y][x].id;
-          board[y1][x1].color = board[y][x].color;
+          if (promote) {
+            board[y1][x1].id = 2 + pro;
+            board[y1][x1].color = board[y][x].color;
+          } else {
+            board[y1][x1].id = board[y][x].id;
+            board[y1][x1].color = board[y][x].color;
+          }
           board[y][x].id = 0;
           board[y][x].color = 0;
-          draw_board();
+          draw_board(turn);
           if (turn == 0) {
             turn = 1;
-          }else {
+          } else {
             turn = 0;
           }
         } else {
-          cout << "Illegal move.";
+          cout << "Illegal move. Please try again.";
         }
       } else {
-        cout << "Its " << color[turn] << "'s turn, please choose a " << color[turn] << " piece.";
+        cout << "Its " << color[turn] << "'s turn, please choose a "
+             << color[turn] << " piece.";
       }
     }
   }
 
+  cout << endl;
   if (check_for_king(0)) {
     cout << "White wins!";
   } else {
