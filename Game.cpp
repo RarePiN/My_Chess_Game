@@ -1,4 +1,5 @@
 #include <iostream>
+#include <algorithm>
 #include <stdlib.h>
 using namespace std;
 
@@ -7,6 +8,8 @@ struct chess_pisces {
   int color;
 };
 
+int Bmove = 0, Wmove = 0;
+int Wcap[16], WcapC = 0, Bcap[16], BcapC = 0;
 chess_pisces board[8][8];
 string white_symbols[6] = {"♟", "♞", "♝", "♜", "♛", "♚"};
 string black_symbols[6] = {"♙", "♘", "♗", "♖", "♕", "♔"};
@@ -87,6 +90,7 @@ void set_board() {
 }
 
 void draw_board(int color) {
+  string colors[2] = {"White's turn.","Black's turn."};
   system("clear");
   char x = 'A';
   for (int i = 0; i < 8; i++) {
@@ -113,7 +117,19 @@ void draw_board(int color) {
   }
   cout << endl;
   cout << endl;
-  cout << color;
+  cout << "Moves- White:" << Wmove << ", Black:" << Bmove << ", Total:" << Wmove + Bmove << endl;
+  cout << "Captured Pieces" << endl;
+  cout << "White: [";
+  for (int z = 0; z < WcapC; z++) {
+    cout << black_symbols[Wcap[z] - 1];
+  }
+  cout << " ]" << endl;
+  cout << "Black: [";
+  for (int z = 0; z < BcapC; z++) {
+    cout << white_symbols[Bcap[z] - 1];
+  }
+  cout << " ]" << endl << endl;
+  cout << "Its " << colors[color];
 }
 
 int main() {
@@ -127,7 +143,6 @@ int main() {
     char count, count1;
     string input;
     cout << endl << endl;
-    ;
     cout << "Please choose a piece: ";
     cin >> input;
     x = input[0] - 49;
@@ -137,7 +152,7 @@ int main() {
       cout << "No piece is on that position.";
     } else {
       if (board[y][x].color == turn) {
-        cout << endl;
+        
         cout << "Please choose a position: ";
         cin >> x1 >> count1;
         x1 = x1 - 1;
@@ -196,8 +211,8 @@ int main() {
             promote = true;
           }
           if (promote == true) {
-            cout << "Choose a piece to promote: (0 :Knight, 1:Bishop, 2:Rook, "
-                    "3: Queen)"
+            cout << "Choose a piece to promote: (0:Knight, 1:Bishop, 2:Rook, "
+                    "3:Queen)"
                  << endl;
             cin >> pro;
           }
@@ -237,6 +252,45 @@ int main() {
             if (slope == 1 or slope == -1) {
               legal = true;
             }
+          }
+
+          if (legal) {
+            //Check the direction of the Bishop
+            int tempX = x, tempY = y;
+            if (x > x1 and y > y1) {
+              while (x1 != tempX and y1 != tempY) {
+                tempX--;
+                tempY--;
+                if (board[tempY][tempX].id != 0) {
+                  legal = false;
+                }
+              }
+            } else if (x < x1 and y > y1) {
+              while (x1 != tempX and y1 != tempY) {
+                tempX++;
+                tempY--;
+                if (board[tempY][tempX].id != 0) {
+                  legal = false;
+                }
+              }
+            } else if (x > x1 and y < y1) {
+              while (x1 != tempX and y1 != tempY) {
+                tempX--;
+                tempY++;
+                if (board[tempY][tempX].id != 0) {
+                  legal = false;
+                }
+              }
+            } else if (x < x1 and y < y1) {
+              while (x1 != tempX and y1 != tempY) {
+                tempX++;
+                tempY++;
+                if (board[tempY][tempX].id != 0) {
+                  legal = false;
+                }
+              }
+            }
+
           }
         }
 
@@ -332,6 +386,43 @@ int main() {
               legal = true;
             }
           }
+          if (legal) {
+            //Check the direction of the Queen
+            int tempX = x, tempY = y;
+            if (x > x1 and y > y1) {
+              while (x1 != tempX and y1 != tempY) {
+                tempX--;
+                tempY--;
+                if (board[tempY][tempX].id != 0) {
+                  legal = false;
+                }
+              }
+            } else if (x < x1 and y > y1) {
+              while (x1 != tempX and y1 != tempY) {
+                tempX++;
+                tempY--;
+                if (board[tempY][tempX].id != 0) {
+                  legal = false;
+                }
+              }
+            } else if (x > x1 and y < y1) {
+              while (x1 != tempX and y1 != tempY) {
+                tempX--;
+                tempY++;
+                if (board[tempY][tempX].id != 0) {
+                  legal = false;
+                }
+              }
+            } else if (x < x1 and y < y1) {
+              while (x1 != tempX and y1 != tempY) {
+                tempX++;
+                tempY++;
+                if (board[tempY][tempX].id != 0) {
+                  legal = false;
+                }
+              }
+            }
+          }
 
           if (legal) {
             // Find the direction of the Queen.
@@ -384,6 +475,16 @@ int main() {
         }
 
         if (legal) {
+          if (board[y1][x1].color != board[y][x].color and board[y][x].id != 0) {
+            if (board[y][x].color == 0) {
+              Wcap[WcapC] = board[y1][x1].id;
+              WcapC++;
+            } else {
+              Bcap[BcapC] = board[y1][x1].id;
+              BcapC++;
+            }
+          }
+
           if (promote) {
             board[y1][x1].id = 2 + pro;
             board[y1][x1].color = board[y][x].color;
@@ -393,12 +494,17 @@ int main() {
           }
           board[y][x].id = 0;
           board[y][x].color = 0;
-          draw_board(turn);
+          
           if (turn == 0) {
+            Wmove++;
             turn = 1;
           } else {
+            Bmove++;
             turn = 0;
           }
+          sort(Wcap,Wcap + WcapC);
+          sort(Bcap,Bcap + BcapC);
+          draw_board(turn);
         } else {
           cout << "Illegal move. Please try again.";
         }
