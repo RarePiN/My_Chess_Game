@@ -1,5 +1,5 @@
-#include <iostream>
 #include <algorithm>
+#include <iostream>
 #include <stdlib.h>
 using namespace std;
 
@@ -90,7 +90,7 @@ void set_board() {
 }
 
 void draw_board(int color) {
-  string colors[2] = {"White's turn.","Black's turn."};
+  string colors[2] = {"White's turn.", "Black's turn."};
   system("clear");
   char x = 'A';
   for (int i = 0; i < 8; i++) {
@@ -117,18 +117,19 @@ void draw_board(int color) {
   }
   cout << endl;
   cout << endl;
-  cout << "Moves- White:" << Wmove << ", Black:" << Bmove << ", Total:" << Wmove + Bmove << endl;
+  cout << "Moves- White:" << Wmove << ", Black:" << Bmove
+       << ", Total:" << Wmove + Bmove << endl;
   cout << "Captured Pieces" << endl;
   cout << "White: [";
   for (int z = 0; z < WcapC; z++) {
-    cout << black_symbols[Wcap[z] - 1];
+    cout << black_symbols[Wcap[z] - 1] << " ";
   }
-  cout << " ]" << endl;
+  cout << "]" << endl;
   cout << "Black: [";
   for (int z = 0; z < BcapC; z++) {
-    cout << white_symbols[Bcap[z] - 1];
+    cout << white_symbols[Bcap[z] - 1] << " ";
   }
-  cout << " ]" << endl << endl;
+  cout << "]" << endl << endl;
   cout << "Its " << colors[color];
 }
 
@@ -152,7 +153,7 @@ int main() {
       cout << "No piece is on that position.";
     } else {
       if (board[y][x].color == turn) {
-        
+
         cout << "Please choose a position: ";
         cin >> x1 >> count1;
         x1 = x1 - 1;
@@ -255,10 +256,10 @@ int main() {
           }
 
           if (legal) {
-            //Check the direction of the Bishop
+            // Check the direction of the Bishop
             int tempX = x, tempY = y;
             if (x > x1 and y > y1) {
-              while (x1 != tempX and y1 != tempY) {
+              while (x1 + 1 != tempX and y1 + 1 != tempY) {
                 tempX--;
                 tempY--;
                 if (board[tempY][tempX].id != 0) {
@@ -266,7 +267,7 @@ int main() {
                 }
               }
             } else if (x < x1 and y > y1) {
-              while (x1 != tempX and y1 != tempY) {
+              while (x1 - 1 != tempX and y1 + 1 != tempY) {
                 tempX++;
                 tempY--;
                 if (board[tempY][tempX].id != 0) {
@@ -274,7 +275,7 @@ int main() {
                 }
               }
             } else if (x > x1 and y < y1) {
-              while (x1 != tempX and y1 != tempY) {
+              while (x1 + 1 != tempX and y1 - 1 != tempY) {
                 tempX--;
                 tempY++;
                 if (board[tempY][tempX].id != 0) {
@@ -282,7 +283,7 @@ int main() {
                 }
               }
             } else if (x < x1 and y < y1) {
-              while (x1 != tempX and y1 != tempY) {
+              while (x1 - 1 != tempX and y1 - 1 != tempY) {
                 tempX++;
                 tempY++;
                 if (board[tempY][tempX].id != 0) {
@@ -290,7 +291,6 @@ int main() {
                 }
               }
             }
-
           }
         }
 
@@ -318,33 +318,33 @@ int main() {
           }
 
           // Check if anything is in its way.
-          
+
           if (legal) {
             // Find the direction of the rook.
             int tempX = x, tempY = y;
             if (x1 > x and y1 == y) { // down
-              while (x1 != tempX) {
+              while (x1 - 1 != tempX) {
                 tempX++;
                 if (board[y1][tempX].id != 0) {
                   legal = false;
                 }
               }
             } else if (x1 < x and y1 == y) { // up
-              while (x1 != tempX) {
+              while (x1 + 1 != tempX) {
                 tempX--;
                 if (board[y1][tempX].id != 0) {
                   legal = false;
                 }
               }
             } else if (y1 > y and x1 == x) { // right
-              while (y1 != tempY) {
+              while (y1 - 1 != tempY) {
                 tempY++;
                 if (board[tempY][x1].id != 0) {
                   legal = false;
                 }
               }
             } else if (y1 < y and x1 == x) { // left
-              while (y1 != tempY) {
+              while (y1 + 1 != tempY) {
                 tempY--;
                 if (board[tempY][x1].id != 0) {
                   legal = false;
@@ -387,10 +387,10 @@ int main() {
             }
           }
           if (legal) {
-            //Check the direction of the Queen
+            // Check the direction of the Queen
             int tempX = x, tempY = y;
             if (x > x1 and y > y1) {
-              while (x1 != tempX and y1 != tempY) {
+              while (x1 + 1 != tempX and y1 + 1 != tempY) {
                 tempX--;
                 tempY--;
                 if (board[tempY][tempX].id != 0) {
@@ -398,7 +398,7 @@ int main() {
                 }
               }
             } else if (x < x1 and y > y1) {
-              while (x1 != tempX and y1 != tempY) {
+              while (x1 - 1 != tempX and y1 + 1 != tempY) {
                 tempX++;
                 tempY--;
                 if (board[tempY][tempX].id != 0) {
@@ -406,7 +406,7 @@ int main() {
                 }
               }
             } else if (x > x1 and y < y1) {
-              while (x1 != tempX and y1 != tempY) {
+              while (x1 + 1 != tempX and y1 - 1 != tempY) {
                 tempX--;
                 tempY++;
                 if (board[tempY][tempX].id != 0) {
@@ -414,7 +414,7 @@ int main() {
                 }
               }
             } else if (x < x1 and y < y1) {
-              while (x1 != tempX and y1 != tempY) {
+              while (x1 - 1 != tempX and y1 - 1 != tempY) {
                 tempX++;
                 tempY++;
                 if (board[tempY][tempX].id != 0) {
@@ -428,28 +428,28 @@ int main() {
             // Find the direction of the Queen.
             int tempX = x, tempY = y;
             if (x1 > x and y1 == y) { // down
-              while (x1 != tempX) {
+              while (x1 - 1 != tempX) {
                 tempX++;
                 if (board[y1][tempX].id != 0) {
                   legal = false;
                 }
               }
             } else if (x1 < x and y1 == y) { // up
-              while (x1 != tempX) {
+              while (x1 + 1 != tempX) {
                 tempX--;
                 if (board[y1][tempX].id != 0) {
                   legal = false;
                 }
               }
             } else if (y1 > y and x1 == x) { // right
-              while (y1 != tempY) {
+              while (y1 - 1 != tempY) {
                 tempY++;
                 if (board[tempY][x1].id != 0) {
                   legal = false;
                 }
               }
             } else if (y1 < y and x1 == x) { // left
-              while (y1 != tempY) {
+              while (y1 + 1 != tempY) {
                 tempY--;
                 if (board[tempY][x1].id != 0) {
                   legal = false;
@@ -475,7 +475,8 @@ int main() {
         }
 
         if (legal) {
-          if (board[y1][x1].color != board[y][x].color and board[y][x].id != 0) {
+          if (board[y1][x1].color != board[y][x].color and
+              board[y1][x1].id != 0) {
             if (board[y][x].color == 0) {
               Wcap[WcapC] = board[y1][x1].id;
               WcapC++;
@@ -494,7 +495,7 @@ int main() {
           }
           board[y][x].id = 0;
           board[y][x].color = 0;
-          
+
           if (turn == 0) {
             Wmove++;
             turn = 1;
@@ -502,8 +503,8 @@ int main() {
             Bmove++;
             turn = 0;
           }
-          sort(Wcap,Wcap + WcapC);
-          sort(Bcap,Bcap + BcapC);
+          sort(Wcap, Wcap + WcapC);
+          sort(Bcap, Bcap + BcapC);
           draw_board(turn);
         } else {
           cout << "Illegal move. Please try again.";
